@@ -1,1 +1,1 @@
-.
+O valor do Y da imagem deve ser 292 e percorrer por toda a extensao da imagem
