@@ -17,7 +17,7 @@ dependencies:
   http: ^1.2.0
   timezone: ^0.9.2
   permission_handler: ^11.3.0
-  # Adicionado para o jogo Runner com Flame:
+  # Flame
   flame: ^1.10.0
 
 dev_dependencies:
@@ -29,6 +29,7 @@ flutter:
   uses-material-design: true
   assets:
     # Runner game assets
+    # cats
     - assets/images/cat/lulu/runner/1.png
     - assets/images/cat/lulu/runner/2.png
     - assets/images/cat/lulu/runner/3.png
@@ -45,15 +46,16 @@ flutter:
     - assets/images/cat/gute/runner/6.png
     - assets/images/cat/gute/runner/7.png
     - assets/images/cat/gute/runner/8.png
-    - assets/images/zombies/1.png
-    - assets/images/zombies/2.png
+    # scenes
     - assets/images/scenes/1.png
     - assets/images/scenes/2.png
     - assets/images/scenes/3.png
     - assets/images/scenes/4.png
     - assets/images/scenes/5.png
     - assets/images/scenes/6.png
+    # boom
     - assets/images/boom/storm.png
+    # target
     - assets/images/target/target-1.png
     - assets/images/target/target-2.png
     - assets/images/target/target-3.png
@@ -64,6 +66,29 @@ flutter:
     - assets/images/target/target-8.png
     - assets/images/target/target-9.png
     - assets/images/target/target-10.png
+    # final
     - assets/images/end/over.png
     - assets/images/end/win.png
-  
+    # principal
+    - assets/images/credit.png
+    - assets/images/home.png
+    # zombies
+    - assets/images/zombies/lulu/1.png
+    - assets/images/zombies/lulu/2.png
+    - assets/images/zombies/lulu/3.png
+    - assets/images/zombies/lulu/4.png
+    - assets/images/zombies/lulu/5.png
+    - assets/images/zombies/lulu/6.png
+    - assets/images/zombies/lulu/7.png
+    - assets/images/zombies/lulu/8.png
+    - assets/images/zombies/gute/1.png
+    - assets/images/zombies/gute/2.png
+    - assets/images/zombies/gute/3.png
+    - assets/images/zombies/gute/4.png
+    - assets/images/zombies/gute/5.png
+    - assets/images/zombies/gute/6.png
+    - assets/images/zombies/gute/7.png
+    - assets/images/zombies/gute/8.png
+    # audio
+    - assets/audio/miau-music.mp4
+    - assets/audio/over.mp4
