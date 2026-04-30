@@ -1,5 +1,5 @@
-name: cat_vs_zombies
-description: Cat vs Zombies - Lulu and Gute Runner Game!
+name: cats_vs_zombies
+description: Cats vs Zombies - Lulu and Gute Runner Game!
 version: 1.0.0+1
 
 environment:
@@ -46,6 +46,9 @@ flutter:
     - assets/images/cat/gute/runner/6.png
     - assets/images/cat/gute/runner/7.png
     - assets/images/cat/gute/runner/8.png
+    # cats principal
+    - assets/images/cat/lulu/lulu-3d.png
+    - assets/images/cat/gute/gute-3d.png
     # scenes
     - assets/images/scenes/1.png
     - assets/images/scenes/2.png
@@ -72,6 +75,7 @@ flutter:
     # principal
     - assets/images/credit.png
     - assets/images/home.png
+    - assets/images/avatar.png
     # zombies
     - assets/images/zombies/lulu/1.png
     - assets/images/zombies/lulu/2.png
