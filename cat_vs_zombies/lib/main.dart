@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'providers/game_provider.dart';
 import 'screens/runner_game_flame.dart';
 import 'screens/select_avatar.dart';
 import 'screens/tutorial.dart';
@@ -27,23 +25,20 @@ class GuteLearningApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => GameProvider(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Cats vs Zombies',
-        theme: ThemeData(
-          useMaterial3: true,
-          scaffoldBackgroundColor: Colors.black,
-        ),
-        home: const SplashScreen(),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Cats vs Zombies',
+      theme: ThemeData(
+        useMaterial3: true,
+        scaffoldBackgroundColor: Colors.black,
       ),
+      home: const SplashScreen(),
     );
   }
 }
 
 // ─────────────────────────────────────────────
-// 🎮 SPLASH / HOME
+// HOME
 // ─────────────────────────────────────────────
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -83,7 +78,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          /// 🖼️ BACKGROUND
+          /// BACKGROUND
           const Positioned.fill(
             child: Image(
               image: AssetImage('assets/images/home.png'),
@@ -91,7 +86,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ),
 
-          /// 🔊 SOM
+          /// SOM
           Positioned(
             top: size.height * 0.05,
             right: size.width * 0.03,
@@ -112,7 +107,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ),
 
-          /// 🎮 BOTÕES
+          /// BOTÕES
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -120,7 +115,7 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  /// ▶️ JOGAR
+                  /// JOGAR
                   SizedBox(
                     width: buttonWidth,
                     height: buttonHeight,
@@ -145,7 +140,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
                   SizedBox(width: size.width * 0.03),
 
-                  /// 📘 TUTORIAL
+                  /// TUTORIAL
                   SizedBox(
                     width: buttonWidth,
                     height: buttonHeight,

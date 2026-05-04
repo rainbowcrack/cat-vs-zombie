@@ -76,6 +76,7 @@ flutter:
     - assets/images/credit.png
     - assets/images/home.png
     - assets/images/avatar.png
+    - assets/images/again.png
     # zombies
     - assets/images/zombies/lulu/1.png
     - assets/images/zombies/lulu/2.png

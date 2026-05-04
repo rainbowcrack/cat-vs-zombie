@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'over_screen.dart';
 
 class RunnerGameScreen extends StatefulWidget {
   final String selectedAvatar;
@@ -11,9 +12,6 @@ class RunnerGameScreen extends StatefulWidget {
 }
 
 class _RunnerGameScreenState extends State<RunnerGameScreen> {
-  // ─────────────────────────
-  // STATE
-  // ─────────────────────────
   int frame = 0;
   int lives = 14;
   int level = 1;
@@ -28,6 +26,8 @@ class _RunnerGameScreenState extends State<RunnerGameScreen> {
   final List<Boom> booms = [];
 
   late double sceneWidth;
+
+  bool gameOver = false;
 
   @override
   void initState() {
@@ -44,18 +44,24 @@ class _RunnerGameScreenState extends State<RunnerGameScreen> {
     super.dispose();
   }
 
-  // ─────────────────────────
-  // GAME LOOP
-  // ─────────────────────────
-  void _update() {
+  void _goToGameOver() {
     if (!mounted) return;
 
-    setState(() {
-      final size = MediaQuery.of(context).size;
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => OverScreen(score: level),
+      ),
+    );
+  }
 
+  void _update() {
+    if (!mounted || gameOver) return;
+
+    final size = MediaQuery.of(context).size;
+
+    setState(() {
       sceneWidth = size.width * 6;
 
-      // SCROLL INFINITO FLUIDO (DINO STYLE)
       worldX -= 3.0;
       if (worldX <= -size.width * 6) {
         worldX = 0.0;
@@ -77,19 +83,29 @@ class _RunnerGameScreenState extends State<RunnerGameScreen> {
         ));
       }
 
-      // update zombies
+      // update zombies + colisão
       for (final z in zombies) {
         z.x -= z.speed;
 
         if (z.x < 100 && !z.dead) {
-          lives--;
+          lives--; // 👈 cada zombie que encosta tira 1 vida
           z.dead = true;
         }
       }
 
       zombies.removeWhere((z) => z.dead);
-
       booms.removeWhere((b) => b.tick++ > 15);
+
+      // 🔴 GAME OVER DETECTADO
+      if (lives <= 0) {
+        gameOver = true;
+        loop?.cancel();
+
+        // sai do setState e navega seguro
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _goToGameOver();
+        });
+      }
     });
   }
 
@@ -104,9 +120,6 @@ class _RunnerGameScreenState extends State<RunnerGameScreen> {
     });
   }
 
-  // ─────────────────────────
-  // UI
-  // ─────────────────────────
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -115,9 +128,6 @@ class _RunnerGameScreenState extends State<RunnerGameScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // ─────────────────────────
-          // SCENES (CORRETO + FLUIDO)
-          // ─────────────────────────
           Positioned.fill(
             child: Transform.translate(
               offset: Offset(worldX, 0),
@@ -133,9 +143,6 @@ class _RunnerGameScreenState extends State<RunnerGameScreen> {
             ),
           ),
 
-          // ─────────────────────────
-          // ZOMBIES (2 TIPOS + ANIMAÇÃO 1-8)
-          // ─────────────────────────
           ...zombies.map((z) {
             return Positioned(
               left: z.x,
@@ -150,9 +157,6 @@ class _RunnerGameScreenState extends State<RunnerGameScreen> {
             );
           }),
 
-          // ─────────────────────────
-          // BOOM
-          // ─────────────────────────
           ...booms.map((b) {
             final opacity = (1.0 - b.tick / 15).clamp(0.0, 1.0);
 
@@ -169,23 +173,14 @@ class _RunnerGameScreenState extends State<RunnerGameScreen> {
             );
           }),
 
-          // ─────────────────────────
-          // CAT FRONT
-          // ─────────────────────────
           _cat(widget.selectedAvatar, size, true),
 
-          // ─────────────────────────
-          // CAT BACK
-          // ─────────────────────────
           _cat(
             widget.selectedAvatar == 'lulu' ? 'gute' : 'lulu',
             size,
             false,
           ),
 
-          // ─────────────────────────
-          // HUD
-          // ─────────────────────────
           Positioned(
             top: 40,
             left: 20,
@@ -199,9 +194,6 @@ class _RunnerGameScreenState extends State<RunnerGameScreen> {
     );
   }
 
-  // ─────────────────────────
-  // CAT
-  // ─────────────────────────
   Widget _cat(String avatar, Size size, bool front) {
     return Positioned(
       left: front ? 140 : 90,
@@ -214,9 +206,8 @@ class _RunnerGameScreenState extends State<RunnerGameScreen> {
   }
 }
 
-// ─────────────────────────────
 // MODELS
-// ─────────────────────────────
+
 class Zombie {
   double x;
   double y;

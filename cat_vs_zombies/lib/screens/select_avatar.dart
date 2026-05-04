@@ -220,7 +220,7 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
 
                           const Spacer(),
 
-                          /// ✅ BOTÃO FUNCIONAL
+                          /// BOTÃO FUNCIONAL
                           ElevatedButton(
                             onPressed: _chooseAvatar,
                             style: ElevatedButton.styleFrom(
