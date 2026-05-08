@@ -58,25 +58,12 @@ flutter:
     - assets/images/scenes/6.png
     # boom
     - assets/images/boom/storm.png
-    # target
-    - assets/images/target/target-1.png
-    - assets/images/target/target-2.png
-    - assets/images/target/target-3.png
-    - assets/images/target/target-4.png
-    - assets/images/target/target-5.png
-    - assets/images/target/target-6.png
-    - assets/images/target/target-7.png
-    - assets/images/target/target-8.png
-    - assets/images/target/target-9.png
-    - assets/images/target/target-10.png
-    # final
-    - assets/images/end/over.png
-    - assets/images/end/win.png
     # principal
     - assets/images/credit.png
     - assets/images/home.png
     - assets/images/avatar.png
     - assets/images/again.png
+    - assets/images/arm-choose.png
     # zombies
     - assets/images/zombies/lulu/1.png
     - assets/images/zombies/lulu/2.png
@@ -94,6 +81,26 @@ flutter:
     - assets/images/zombies/gute/6.png
     - assets/images/zombies/gute/7.png
     - assets/images/zombies/gute/8.png
+    # arms gute e lulu
+    - assets/images/arms/lulu/1.png
+    - assets/images/arms/lulu/2.png
+    - assets/images/arms/lulu/3.png
+    - assets/images/arms/lulu/4.png
+    - assets/images/arms/lulu/5.png
+    - assets/images/arms/lulu/6.png
+    - assets/images/arms/lulu/7.png
+    - assets/images/arms/lulu/8.png
+    - assets/images/arms/gute/1.png
+    - assets/images/arms/gute/2.png
+    - assets/images/arms/gute/3.png
+    - assets/images/arms/gute/4.png
+    - assets/images/arms/gute/5.png
+    - assets/images/arms/gute/6.png
+    - assets/images/arms/gute/7.png
+    - assets/images/arms/gute/8.png
+    # arms
+    - assets/images/arms/green.png
+    - assets/images/arms/purple.png
     # audio
     - assets/audio/miau-music.mp4
     - assets/audio/over.mp4
