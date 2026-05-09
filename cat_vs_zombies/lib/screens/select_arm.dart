@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-// TROQUE O IMPORT DA TELA DO JOGO
-import 'select_arm.dart';
+// TELA DO JOGO
+import 'runner_game_flame.dart';
 
-class SelectAvatarScreen extends StatefulWidget {
-  const SelectAvatarScreen({super.key});
+class SelectArmScreen extends StatefulWidget {
+  final String selectedAvatar;
+
+  const SelectArmScreen({
+    super.key,
+    required this.selectedAvatar,
+  });
 
   @override
-  State<SelectAvatarScreen> createState() => _SelectAvatarScreenState();
+  State<SelectArmScreen> createState() => _SelectArmScreenState();
 }
 
-class _SelectAvatarScreenState extends State<SelectAvatarScreen>
+class _SelectArmScreenState extends State<SelectArmScreen>
     with SingleTickerProviderStateMixin {
   int index = 0;
 
@@ -19,34 +24,18 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
   late Animation<double> fade;
   late Animation<double> scale;
 
-  final avatars = [
+  final arms = [
     {
-      "name": "Gute",
-      "image": "../assets/images/cat/gute/gute-3d.png",
-      "energy": 0.6,
-      "empatia": 0.9,
-      "intro": 0.6,
-      "coragem": 0.5,
-      "skills": [
-        "Raciocínio rápido",
-        "Estrutura de dados",
-        "Comunicativo",
-        "Gosta de burgers hot pockets"
-      ],
+      "name": "Green Blaster",
+      "image": "assets/images/arms/green.png",
+      "description":
+          "Arma equilibrada com disparos rápidos e boa precisão.",
     },
     {
-      "name": "Lulu",
-      "image": "../assets/images/cat/lulu/lulu-3d.png",
-      "energy": 0.7,
-      "empatia": 0.5,
-      "intro": 0.9,
-      "coragem": 0.6,
-      "skills": [
-        "Analítica",
-        "Cálculo",
-        "Tímida",
-        "Gosta de yakissoba e dias chuvosos"
-      ],
+      "name": "Purple Cannon",
+      "image": "assets/images/arms/purple.png",
+      "description":
+          "Arma poderosa com tiros energéticos e alto impacto.",
     }
   ];
 
@@ -65,6 +54,7 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
     );
 
     fade = Tween<double>(begin: 0.5, end: 1).animate(controller);
+
     scale = Tween<double>(begin: 0.98, end: 1).animate(controller);
 
     controller.forward();
@@ -76,60 +66,33 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
 
   void change(int newIndex) {
     setState(() => index = newIndex);
+
     playSound();
+
     controller.forward(from: 0);
   }
 
-  void next() => change((index + 1) % avatars.length);
-  void prev() => change((index - 1 + avatars.length) % avatars.length);
+  void next() => change((index + 1) % arms.length);
 
-  void _chooseAvatar() {
-    final selected = avatars[index]["name"].toString().toLowerCase();
+  void prev() => change((index - 1 + arms.length) % arms.length);
+
+  void _chooseArm() {
+    final selectedArm = arms[index]["name"].toString().toLowerCase();
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => SelectArmScreen(
-          selectedAvatar: selected,
+        builder: (_) => RunnerGameScreen(
+          selectedAvatar: widget.selectedAvatar,
+          selectedArm: selectedArm,
         ),
-      ),
-    );
-  }
-
-  Widget bar(String label, double value, Color color) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 70,
-          child: Text(label,
-              style: const TextStyle(color: Colors.white70, fontSize: 10)),
-        ),
-        Expanded(
-          child: LinearProgressIndicator(
-            value: value,
-            backgroundColor: Colors.white12,
-            color: color,
-            minHeight: 4,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget hearts() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(
-        7,
-        (i) => const Icon(Icons.favorite,
-            color: Colors.redAccent, size: 12),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final avatar = avatars[index];
+    final arm = arms[index];
 
     const double cardWidth = 230;
     const double cardHeight = 330;
@@ -140,7 +103,7 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
         children: [
           Positioned.fill(
             child: Image.asset(
-              "../assets/images/avatar.png",
+              "assets/images/arm-choose.png",
               fit: BoxFit.cover,
             ),
           ),
@@ -155,8 +118,11 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
                   children: [
                     IconButton(
                       onPressed: prev,
-                      icon: const Icon(Icons.arrow_left,
-                          size: 50, color: Colors.white),
+                      icon: const Icon(
+                        Icons.arrow_left,
+                        size: 50,
+                        color: Colors.white,
+                      ),
                     ),
 
                     Container(
@@ -171,49 +137,32 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
                       child: Column(
                         children: [
                           Text(
-                            avatar["name"] as String,
+                            arm["name"] as String,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
+                            textAlign: TextAlign.center,
                           ),
 
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 16),
 
                           SizedBox(
-                            height: 110,
+                            height: 160,
                             child: Image.asset(
-                              avatar["image"] as String,
+                              arm["image"] as String,
                               fit: BoxFit.contain,
                             ),
                           ),
 
-                          const SizedBox(height: 6),
-
-                          hearts(),
-
-                          const SizedBox(height: 6),
-
-                          bar("Energia", avatar["energy"] as double,
-                              Colors.yellow),
-                          const SizedBox(height: 3),
-                          bar("Empatia", avatar["empatia"] as double,
-                              Colors.pink),
-                          const SizedBox(height: 3),
-                          bar("Introversão", avatar["intro"] as double,
-                              Colors.blue),
-                          const SizedBox(height: 3),
-                          bar("Coragem", avatar["coragem"] as double,
-                              Colors.green),
-
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 16),
 
                           Text(
-                            (avatar["skills"] as List<String>).join(", "),
+                            arm["description"] as String,
                             style: const TextStyle(
                               color: Colors.white70,
-                              fontSize: 9,
+                              fontSize: 11,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -221,11 +170,13 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
                           const Spacer(),
 
                           ElevatedButton(
-                            onPressed: _chooseAvatar,
+                            onPressed: _chooseArm,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.amber,
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 5),
+                                horizontal: 12,
+                                vertical: 5,
+                              ),
                             ),
                             child: const Text(
                               "Escolha",
@@ -238,8 +189,11 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
 
                     IconButton(
                       onPressed: next,
-                      icon: const Icon(Icons.arrow_right,
-                          size: 50, color: Colors.white),
+                      icon: const Icon(
+                        Icons.arrow_right,
+                        size: 50,
+                        color: Colors.white,
+                      ),
                     ),
                   ],
                 ),

@@ -5,7 +5,13 @@ import 'over_screen.dart';
 
 class RunnerGameScreen extends StatefulWidget {
   final String selectedAvatar;
-  const RunnerGameScreen({super.key, required this.selectedAvatar});
+  final String selectedArm;
+
+  const RunnerGameScreen({
+    super.key,
+    required this.selectedAvatar,
+    required this.selectedArm,
+  });
 
   @override
   State<RunnerGameScreen> createState() => _RunnerGameScreenState();
@@ -88,7 +94,7 @@ class _RunnerGameScreenState extends State<RunnerGameScreen> {
         z.x -= z.speed;
 
         if (z.x < 100 && !z.dead) {
-          lives--; // 👈 cada zombie que encosta tira 1 vida
+          lives--;
           z.dead = true;
         }
       }
@@ -96,12 +102,11 @@ class _RunnerGameScreenState extends State<RunnerGameScreen> {
       zombies.removeWhere((z) => z.dead);
       booms.removeWhere((b) => b.tick++ > 15);
 
-      // 🔴 GAME OVER DETECTADO
+      // GAME OVER
       if (lives <= 0) {
         gameOver = true;
         loop?.cancel();
 
-        // sai do setState e navega seguro
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _goToGameOver();
         });
@@ -173,8 +178,10 @@ class _RunnerGameScreenState extends State<RunnerGameScreen> {
             );
           }),
 
+          // 👇 CAT PRINCIPAL (JOGADOR)
           _cat(widget.selectedAvatar, size, true),
 
+          // 👇 CAT INIMIGO
           _cat(
             widget.selectedAvatar == 'lulu' ? 'gute' : 'lulu',
             size,
@@ -185,7 +192,7 @@ class _RunnerGameScreenState extends State<RunnerGameScreen> {
             top: 40,
             left: 20,
             child: Text(
-              "❤️ $lives | Level $level",
+              "❤️ $lives | Level $level | Arma: ${widget.selectedArm}",
               style: const TextStyle(color: Colors.white, fontSize: 18),
             ),
           ),
@@ -194,12 +201,16 @@ class _RunnerGameScreenState extends State<RunnerGameScreen> {
     );
   }
 
+  // 🔥 AQUI ESTÁ A MÁGICA DA ANIMAÇÃO
   Widget _cat(String avatar, Size size, bool front) {
+    final isPlayer = avatar == widget.selectedAvatar;
+    final folder = isPlayer ? 'arm' : 'runner';
+
     return Positioned(
       left: front ? 140 : 90,
       top: groundY,
       child: Image.asset(
-        'assets/images/cat/$avatar/runner/${frame + 1}.png',
+        'assets/images/cat/$avatar/$folder/${frame + 1}.png',
         width: front ? 130 : 110,
       ),
     );

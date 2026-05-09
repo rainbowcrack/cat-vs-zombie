@@ -82,22 +82,22 @@ flutter:
     - assets/images/zombies/gute/7.png
     - assets/images/zombies/gute/8.png
     # arms gute e lulu
-    - assets/images/arms/lulu/1.png
-    - assets/images/arms/lulu/2.png
-    - assets/images/arms/lulu/3.png
-    - assets/images/arms/lulu/4.png
-    - assets/images/arms/lulu/5.png
-    - assets/images/arms/lulu/6.png
-    - assets/images/arms/lulu/7.png
-    - assets/images/arms/lulu/8.png
-    - assets/images/arms/gute/1.png
-    - assets/images/arms/gute/2.png
-    - assets/images/arms/gute/3.png
-    - assets/images/arms/gute/4.png
-    - assets/images/arms/gute/5.png
-    - assets/images/arms/gute/6.png
-    - assets/images/arms/gute/7.png
-    - assets/images/arms/gute/8.png
+    - assets/images/cat/lulu/arm/1.png
+    - assets/images/cat/lulu/arm/2.png
+    - assets/images/cat/lulu/arm/3.png
+    - assets/images/cat/lulu/arm/4.png
+    - assets/images/cat/lulu/arm/5.png
+    - assets/images/cat/lulu/arm/6.png
+    - assets/images/cat/lulu/arm/7.png
+    - assets/images/cat/lulu/arm/8.png
+    - assets/images/cat/gute/arm/1.png
+    - assets/images/cat/gute/arm/2.png
+    - assets/images/cat/gute/arm/3.png
+    - assets/images/cat/gute/arm/4.png
+    - assets/images/cat/gute/arm/5.png
+    - assets/images/cat/gute/arm/6.png
+    - assets/images/cat/gute/arm/7.png
+    - assets/images/cat/gute/arm/8.png
     # arms
     - assets/images/arms/green.png
     - assets/images/arms/purple.png
