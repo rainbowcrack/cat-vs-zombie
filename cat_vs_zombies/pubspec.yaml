@@ -81,6 +81,15 @@ flutter:
     - assets/images/zombies/gute/6.png
     - assets/images/zombies/gute/7.png
     - assets/images/zombies/gute/8.png
+    # boss
+    - assets/images/boss/1.png
+    - assets/images/boss/2.png
+    - assets/images/boss/3.png
+    - assets/images/boss/4.png
+    - assets/images/boss/5.png
+    - assets/images/boss/6.png
+    - assets/images/boss/7.png
+    - assets/images/boss/8.png
     # arms gute e lulu
     - assets/images/cat/lulu/arm/1.png
     - assets/images/cat/lulu/arm/2.png
@@ -102,5 +111,8 @@ flutter:
     - assets/images/arms/green.png
     - assets/images/arms/purple.png
     # audio
-    - assets/audio/miau-music.mp4
-    - assets/audio/over.mp4
+    - assets/audio/game.wav
+    - assets/audio/laser.wav
+    - assets/audio/start.wav
+    - assets/audio/zombie.wav
+    - assets/audio/over.wav

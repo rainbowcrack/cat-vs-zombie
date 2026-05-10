@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'screens/runner_game_flame.dart';
 import 'screens/select_avatar.dart';
 import 'screens/tutorial.dart';
+
+import 'audio/audio_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,6 +53,25 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   bool soundOn = true;
 
+  final AudioManager _audio = AudioManager();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _startMusic();
+  }
+
+  /// 🎵 MUSICA (NÃO QUEBRA SE DER ERRO)
+  Future<void> _startMusic() async {
+    try {
+      await _audio.playMusic('audio/start.mp3');
+    } catch (e) {
+      // se falhar áudio, o jogo continua normal
+      debugPrint('Audio error (ignorado): $e');
+    }
+  }
+
   void _goToGame() {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (_) => const SelectAvatarScreen()),
@@ -62,18 +84,20 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  void _toggleSound() {
+  /// 🔇 SOM GLOBAL
+  Future<void> _toggleSound() async {
     setState(() => soundOn = !soundOn);
+
+    try {
+      await _audio.toggleMute();
+    } catch (e) {
+      debugPrint('Audio toggle error (ignorado): $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-
-    final buttonWidth = size.width * 0.22;
-    final buttonHeight = size.height * 0.10;
-    final fontSize = size.width * 0.018;
-    final iconSize = size.width * 0.025;
 
     return Scaffold(
       body: Stack(
@@ -86,7 +110,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ),
 
-          /// SOM
+          /// BOTÃO SOM
           Positioned(
             top: size.height * 0.05,
             right: size.width * 0.03,
@@ -94,14 +118,14 @@ class _SplashScreenState extends State<SplashScreen> {
               onTap: _toggleSound,
               child: Container(
                 padding: EdgeInsets.all(size.width * 0.012),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.black45,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   soundOn ? Icons.volume_up : Icons.volume_off,
                   color: Colors.white,
-                  size: iconSize,
+                  size: size.width * 0.025,
                 ),
               ),
             ),
@@ -117,8 +141,8 @@ class _SplashScreenState extends State<SplashScreen> {
                 children: [
                   /// JOGAR
                   SizedBox(
-                    width: buttonWidth,
-                    height: buttonHeight,
+                    width: size.width * 0.22,
+                    height: size.height * 0.10,
                     child: ElevatedButton(
                       onPressed: _goToGame,
                       style: ElevatedButton.styleFrom(
@@ -130,7 +154,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       child: Text(
                         'JOGAR',
                         style: TextStyle(
-                          fontSize: fontSize,
+                          fontSize: size.width * 0.018,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -142,8 +166,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
                   /// TUTORIAL
                   SizedBox(
-                    width: buttonWidth,
-                    height: buttonHeight,
+                    width: size.width * 0.22,
+                    height: size.height * 0.10,
                     child: OutlinedButton(
                       onPressed: _goToTutorial,
                       style: OutlinedButton.styleFrom(
@@ -155,7 +179,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       child: Text(
                         'TUTORIAL',
                         style: TextStyle(
-                          fontSize: fontSize,
+                          fontSize: size.width * 0.018,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),

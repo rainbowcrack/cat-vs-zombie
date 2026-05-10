@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:audioplayers/audioplayers.dart';
 
-// TELA DO JOGO
 import 'runner_game_flame.dart';
 
 class SelectArmScreen extends StatefulWidget {
@@ -24,18 +24,19 @@ class _SelectArmScreenState extends State<SelectArmScreen>
   late Animation<double> fade;
   late Animation<double> scale;
 
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  bool soundOn = true;
+
   final arms = [
     {
       "name": "Green Blaster",
       "image": "assets/images/arms/green.png",
-      "description":
-          "Arma equilibrada com disparos rápidos e boa precisão.",
+      "description": "Arma equilibrada com disparos rápidos e boa precisão.",
     },
     {
       "name": "Purple Cannon",
       "image": "assets/images/arms/purple.png",
-      "description":
-          "Arma poderosa com tiros energéticos e alto impacto.",
+      "description": "Arma poderosa com tiros energéticos e alto impacto.",
     }
   ];
 
@@ -54,10 +55,46 @@ class _SelectArmScreenState extends State<SelectArmScreen>
     );
 
     fade = Tween<double>(begin: 0.5, end: 1).animate(controller);
-
     scale = Tween<double>(begin: 0.98, end: 1).animate(controller);
 
     controller.forward();
+
+    _playMusic();
+  }
+
+  /// 🎵 música com proteção (NUNCA quebra jogo)
+  Future<void> _playMusic() async {
+    try {
+      await _audioPlayer.setReleaseMode(ReleaseMode.loop);
+
+      await _audioPlayer.play(
+        AssetSource('audio/start.wav'),
+        volume: 1.0,
+      );
+    } catch (e) {
+      debugPrint("Audio error ignorado: $e");
+    }
+  }
+
+  Future<void> _toggleSound() async {
+    setState(() => soundOn = !soundOn);
+
+    try {
+      if (soundOn) {
+        await _audioPlayer.resume();
+      } else {
+        await _audioPlayer.pause();
+      }
+    } catch (e) {
+      debugPrint("Toggle audio error ignorado: $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    _audioPlayer.dispose();
+    super.dispose();
   }
 
   void playSound() {
@@ -66,14 +103,11 @@ class _SelectArmScreenState extends State<SelectArmScreen>
 
   void change(int newIndex) {
     setState(() => index = newIndex);
-
     playSound();
-
     controller.forward(from: 0);
   }
 
   void next() => change((index + 1) % arms.length);
-
   void prev() => change((index - 1 + arms.length) % arms.length);
 
   void _chooseArm() {
@@ -108,6 +142,27 @@ class _SelectArmScreenState extends State<SelectArmScreen>
             ),
           ),
 
+          /// 🔊 BOTÃO SOM
+          Positioned(
+            top: 20,
+            right: 20,
+            child: GestureDetector(
+              onTap: _toggleSound,
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.black45,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  soundOn ? Icons.volume_up : Icons.volume_off,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ),
+            ),
+          ),
+
           Center(
             child: FadeTransition(
               opacity: fade,
@@ -118,11 +173,8 @@ class _SelectArmScreenState extends State<SelectArmScreen>
                   children: [
                     IconButton(
                       onPressed: prev,
-                      icon: const Icon(
-                        Icons.arrow_left,
-                        size: 50,
-                        color: Colors.white,
-                      ),
+                      icon: const Icon(Icons.arrow_left,
+                          size: 50, color: Colors.white),
                     ),
 
                     Container(
@@ -143,7 +195,6 @@ class _SelectArmScreenState extends State<SelectArmScreen>
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
-                            textAlign: TextAlign.center,
                           ),
 
                           const SizedBox(height: 16),
@@ -189,11 +240,8 @@ class _SelectArmScreenState extends State<SelectArmScreen>
 
                     IconButton(
                       onPressed: next,
-                      icon: const Icon(
-                        Icons.arrow_right,
-                        size: 50,
-                        color: Colors.white,
-                      ),
+                      icon: const Icon(Icons.arrow_right,
+                          size: 50, color: Colors.white),
                     ),
                   ],
                 ),

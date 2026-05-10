@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-// TROQUE O IMPORT DA TELA DO JOGO
 import 'select_arm.dart';
+import '../audio/audio_manager.dart';
 
 class SelectAvatarScreen extends StatefulWidget {
   const SelectAvatarScreen({super.key});
@@ -19,10 +19,13 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
   late Animation<double> fade;
   late Animation<double> scale;
 
+  final AudioManager _audio = AudioManager();
+  bool soundOn = true;
+
   final avatars = [
     {
       "name": "Gute",
-      "image": "../assets/images/cat/gute/gute-3d.png",
+      "image": "assets/images/cat/gute/gute-3d.png",
       "energy": 0.6,
       "empatia": 0.9,
       "intro": 0.6,
@@ -36,7 +39,7 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
     },
     {
       "name": "Lulu",
-      "image": "../assets/images/cat/lulu/lulu-3d.png",
+      "image": "assets/images/cat/lulu/lulu-3d.png",
       "energy": 0.7,
       "empatia": 0.5,
       "intro": 0.9,
@@ -68,6 +71,33 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
     scale = Tween<double>(begin: 0.98, end: 1).animate(controller);
 
     controller.forward();
+
+    _startMusic();
+  }
+
+  /// 🎵 música usando SINGLETON (não quebra jogo)
+  Future<void> _startMusic() async {
+    try {
+      await _audio.playMusic('audio/start.mp3');
+    } catch (e) {
+      debugPrint('Audio error (ignorado): $e');
+    }
+  }
+
+  Future<void> _toggleSound() async {
+    setState(() => soundOn = !soundOn);
+
+    try {
+      await _audio.toggleMute();
+    } catch (e) {
+      debugPrint('Audio toggle error (ignorado): $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   void playSound() {
@@ -140,8 +170,29 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
         children: [
           Positioned.fill(
             child: Image.asset(
-              "../assets/images/avatar.png",
+              "assets/images/avatar.png",
               fit: BoxFit.cover,
+            ),
+          ),
+
+          /// 🔊 BOTÃO SOM
+          Positioned(
+            top: 20,
+            right: 20,
+            child: GestureDetector(
+              onTap: _toggleSound,
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.black45,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  soundOn ? Icons.volume_up : Icons.volume_off,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ),
             ),
           ),
 
