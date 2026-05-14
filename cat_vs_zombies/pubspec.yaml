@@ -24,6 +24,13 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icon.png"
+  min_sdk_android: 21
 
 flutter:
   uses-material-design: true
@@ -116,3 +123,5 @@ flutter:
     - assets/audio/start.wav
     - assets/audio/zombie.wav
     - assets/audio/over.wav
+    # favicon
+    - assets/icon/icon.png
