@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 import 'again_screen.dart';
+import '../storage/score_history.dart';
 
 class OverScreen extends StatefulWidget {
   final int score;
@@ -19,11 +20,21 @@ class _OverScreenState extends State<OverScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   bool soundOn = true;
+  late final Future<void> _saveScoreFuture;
 
   @override
   void initState() {
     super.initState();
+    _saveScoreFuture = _saveScore();
     _playMusic();
+  }
+
+  Future<void> _saveScore() async {
+    try {
+      await ScoreHistory.addScore(widget.score);
+    } catch (e) {
+      debugPrint("Erro ao salvar score (ignorado): $e");
+    }
   }
 
   Future<void> _playMusic() async {
@@ -31,7 +42,7 @@ class _OverScreenState extends State<OverScreen> {
       await _audioPlayer.setReleaseMode(ReleaseMode.loop);
 
       await _audioPlayer.play(
-        AssetSource('audio/over.mp3'), // 👈 padrão correto
+        AssetSource('audio/over.wav'),
         volume: 1.0,
       );
     } catch (e) {
@@ -120,7 +131,10 @@ class _OverScreenState extends State<OverScreen> {
                       color: Colors.white,
                       size: size.width * 0.05,
                     ),
-                    onPressed: () {
+                    onPressed: () async {
+                      await _saveScoreFuture;
+                      if (!context.mounted) return;
+
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

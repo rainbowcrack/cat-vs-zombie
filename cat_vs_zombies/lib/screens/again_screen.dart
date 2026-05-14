@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 import 'select_avatar.dart';
+import '../storage/score_history.dart';
 
 class AgainScreen extends StatefulWidget {
   const AgainScreen({super.key});
@@ -14,11 +15,31 @@ class _AgainScreenState extends State<AgainScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   bool soundOn = true;
+  bool loadingScores = true;
+  List<ScoreEntry> previousScores = const [];
 
   @override
   void initState() {
     super.initState();
+    _loadScores();
     _playMusic();
+  }
+
+  Future<void> _loadScores() async {
+    try {
+      final scores = await ScoreHistory.getScores();
+      if (!mounted) return;
+
+      setState(() {
+        previousScores = scores.take(3).toList();
+        loadingScores = false;
+      });
+    } catch (e) {
+      debugPrint("Erro ao carregar scores (ignorado): $e");
+      if (!mounted) return;
+
+      setState(() => loadingScores = false);
+    }
   }
 
   Future<void> _playMusic() async {
@@ -26,7 +47,7 @@ class _AgainScreenState extends State<AgainScreen> {
       await _audioPlayer.setReleaseMode(ReleaseMode.loop);
 
       await _audioPlayer.play(
-        AssetSource('audio/over.mp3'), // 👈 padronizado
+        AssetSource('audio/over.wav'),
         volume: 1.0,
       );
     } catch (e) {
@@ -57,6 +78,7 @@ class _AgainScreenState extends State<AgainScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
+    final scoreCardWidth = (size.width * 0.32).clamp(230.0, 340.0).toDouble();
 
     return Scaffold(
       body: Stack(
@@ -90,6 +112,71 @@ class _AgainScreenState extends State<AgainScreen> {
             ),
           ),
 
+          /// SCORES ANTERIORES
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              width: scoreCardWidth,
+              padding: EdgeInsets.symmetric(
+                horizontal: size.width * 0.018,
+                vertical: size.height * 0.025,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.55),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.white24),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Scores anteriores',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize:
+                          (size.width * 0.02).clamp(16.0, 22.0).toDouble(),
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: size.height * 0.018),
+                  if (loadingScores)
+                    const SizedBox(
+                      height: 28,
+                      width: 28,
+                      child: CircularProgressIndicator(
+                        color: Colors.white70,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  else if (previousScores.isEmpty)
+                    const Text(
+                      'Nenhuma partida salva ainda',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                      textAlign: TextAlign.center,
+                    )
+                  else
+                    ...List.generate(previousScores.length, (index) {
+                      final entry = previousScores[index];
+
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          bottom: index == previousScores.length - 1 ? 0 : 8,
+                        ),
+                        child: _ScoreRow(
+                          position: index + 1,
+                          score: entry.score,
+                        ),
+                      );
+                    }),
+                ],
+              ),
+            ),
+          ),
+
           /// BOTÃO JOGAR NOVAMENTE
           Align(
             alignment: Alignment.bottomCenter,
@@ -119,6 +206,60 @@ class _AgainScreenState extends State<AgainScreen> {
                   ),
                 ),
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ScoreRow extends StatelessWidget {
+  final int position;
+  final int score;
+
+  const _ScoreRow({
+    required this.position,
+    required this.score,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white12),
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 28,
+            child: Text(
+              '#$position',
+              style: const TextStyle(
+                color: Colors.amber,
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const Expanded(
+            child: Text(
+              'Partida',
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 12,
+              ),
+            ),
+          ),
+          Text(
+            '$score pts',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],

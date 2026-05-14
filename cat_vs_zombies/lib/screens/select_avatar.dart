@@ -8,10 +8,12 @@ class SelectAvatarScreen extends StatefulWidget {
   const SelectAvatarScreen({super.key});
 
   @override
-  State<SelectAvatarScreen> createState() => _SelectAvatarScreenState();
+  State<SelectAvatarScreen> createState() =>
+      _SelectAvatarScreenState();
 }
 
-class _SelectAvatarScreenState extends State<SelectAvatarScreen>
+class _SelectAvatarScreenState
+    extends State<SelectAvatarScreen>
     with SingleTickerProviderStateMixin {
   int index = 0;
 
@@ -20,6 +22,7 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
   late Animation<double> scale;
 
   final AudioManager _audio = AudioManager();
+
   bool soundOn = true;
 
   final avatars = [
@@ -67,30 +70,33 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
       duration: const Duration(milliseconds: 180),
     );
 
-    fade = Tween<double>(begin: 0.5, end: 1).animate(controller);
-    scale = Tween<double>(begin: 0.98, end: 1).animate(controller);
+    fade = Tween<double>(
+      begin: 0.5,
+      end: 1,
+    ).animate(controller);
+
+    scale = Tween<double>(
+      begin: 0.98,
+      end: 1,
+    ).animate(controller);
 
     controller.forward();
 
-    _startMusic();
-  }
-
-  /// 🎵 música usando SINGLETON (não quebra jogo)
-  Future<void> _startMusic() async {
-    try {
-      await _audio.playMusic('audio/start.mp3');
-    } catch (e) {
-      debugPrint('Audio error (ignorado): $e');
-    }
+    //
+    // sincroniza com mute global
+    //
+    soundOn = !_audio.isMuted;
   }
 
   Future<void> _toggleSound() async {
-    setState(() => soundOn = !soundOn);
-
     try {
       await _audio.toggleMute();
+
+      setState(() {
+        soundOn = !_audio.isMuted;
+      });
     } catch (e) {
-      debugPrint('Audio toggle error (ignorado): $e');
+      debugPrint('Audio toggle error: $e');
     }
   }
 
@@ -106,15 +112,24 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
 
   void change(int newIndex) {
     setState(() => index = newIndex);
+
     playSound();
+
     controller.forward(from: 0);
   }
 
-  void next() => change((index + 1) % avatars.length);
-  void prev() => change((index - 1 + avatars.length) % avatars.length);
+  void next() =>
+      change((index + 1) % avatars.length);
+
+  void prev() =>
+      change((index - 1 + avatars.length) %
+          avatars.length);
 
   void _chooseAvatar() {
-    final selected = avatars[index]["name"].toString().toLowerCase();
+    final selected =
+        avatars[index]["name"]
+            .toString()
+            .toLowerCase();
 
     Navigator.push(
       context,
@@ -126,13 +141,22 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
     );
   }
 
-  Widget bar(String label, double value, Color color) {
+  Widget bar(
+    String label,
+    double value,
+    Color color,
+  ) {
     return Row(
       children: [
         SizedBox(
           width: 70,
-          child: Text(label,
-              style: const TextStyle(color: Colors.white70, fontSize: 10)),
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 10,
+            ),
+          ),
         ),
         Expanded(
           child: LinearProgressIndicator(
@@ -148,11 +172,15 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
 
   Widget hearts() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment:
+          MainAxisAlignment.center,
       children: List.generate(
         7,
-        (i) => const Icon(Icons.favorite,
-            color: Colors.redAccent, size: 12),
+        (i) => const Icon(
+          Icons.favorite,
+          color: Colors.redAccent,
+          size: 12,
+        ),
       ),
     );
   }
@@ -175,20 +203,26 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
             ),
           ),
 
-          /// 🔊 BOTÃO SOM
+          //
+          // SOM
+          //
           Positioned(
             top: 20,
             right: 20,
             child: GestureDetector(
               onTap: _toggleSound,
               child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
+                padding:
+                    const EdgeInsets.all(10),
+                decoration:
+                    const BoxDecoration(
                   color: Colors.black45,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  soundOn ? Icons.volume_up : Icons.volume_off,
+                  soundOn
+                      ? Icons.volume_up
+                      : Icons.volume_off,
                   color: Colors.white,
                   size: 28,
                 ),
@@ -202,85 +236,139 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
               child: ScaleTransition(
                 scale: scale,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment:
+                      MainAxisAlignment.center,
                   children: [
                     IconButton(
                       onPressed: prev,
-                      icon: const Icon(Icons.arrow_left,
-                          size: 50, color: Colors.white),
+                      icon: const Icon(
+                        Icons.arrow_left,
+                        size: 50,
+                        color: Colors.white,
+                      ),
                     ),
 
                     Container(
                       width: cardWidth,
                       height: cardHeight,
-                      padding: const EdgeInsets.all(10),
+                      padding:
+                          const EdgeInsets.all(
+                              10),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.55),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.white24),
+                        color: Colors.black
+                            .withOpacity(0.55),
+                        borderRadius:
+                            BorderRadius.circular(
+                                16),
+                        border: Border.all(
+                          color: Colors.white24,
+                        ),
                       ),
                       child: Column(
                         children: [
                           Text(
-                            avatar["name"] as String,
-                            style: const TextStyle(
+                            avatar["name"]
+                                as String,
+                            style:
+                                const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                              fontWeight:
+                                  FontWeight.bold,
                             ),
                           ),
 
-                          const SizedBox(height: 6),
+                          const SizedBox(
+                              height: 6),
 
                           SizedBox(
                             height: 110,
                             child: Image.asset(
-                              avatar["image"] as String,
+                              avatar["image"]
+                                  as String,
                               fit: BoxFit.contain,
                             ),
                           ),
 
-                          const SizedBox(height: 6),
+                          const SizedBox(
+                              height: 6),
 
                           hearts(),
 
-                          const SizedBox(height: 6),
+                          const SizedBox(
+                              height: 6),
 
-                          bar("Energia", avatar["energy"] as double,
-                              Colors.yellow),
-                          const SizedBox(height: 3),
-                          bar("Empatia", avatar["empatia"] as double,
-                              Colors.pink),
-                          const SizedBox(height: 3),
-                          bar("Introversão", avatar["intro"] as double,
-                              Colors.blue),
-                          const SizedBox(height: 3),
-                          bar("Coragem", avatar["coragem"] as double,
-                              Colors.green),
+                          bar(
+                            "Energia",
+                            avatar["energy"]
+                                as double,
+                            Colors.yellow,
+                          ),
 
-                          const SizedBox(height: 6),
+                          const SizedBox(
+                              height: 3),
+
+                          bar(
+                            "Empatia",
+                            avatar["empatia"]
+                                as double,
+                            Colors.pink,
+                          ),
+
+                          const SizedBox(
+                              height: 3),
+
+                          bar(
+                            "Introversão",
+                            avatar["intro"]
+                                as double,
+                            Colors.blue,
+                          ),
+
+                          const SizedBox(
+                              height: 3),
+
+                          bar(
+                            "Coragem",
+                            avatar["coragem"]
+                                as double,
+                            Colors.green,
+                          ),
+
+                          const SizedBox(
+                              height: 6),
 
                           Text(
-                            (avatar["skills"] as List<String>).join(", "),
-                            style: const TextStyle(
-                              color: Colors.white70,
+                            (avatar["skills"]
+                                    as List<String>)
+                                .join(", "),
+                            style:
+                                const TextStyle(
+                              color:
+                                  Colors.white70,
                               fontSize: 9,
                             ),
-                            textAlign: TextAlign.center,
+                            textAlign:
+                                TextAlign.center,
                           ),
 
                           const Spacer(),
 
                           ElevatedButton(
-                            onPressed: _chooseAvatar,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.amber,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 5),
+                            onPressed:
+                                _chooseAvatar,
+                            style:
+                                ElevatedButton
+                                    .styleFrom(
+                              backgroundColor:
+                                  Colors.amber,
                             ),
                             child: const Text(
                               "Escolha",
-                              style: TextStyle(color: Colors.black),
+                              style: TextStyle(
+                                color:
+                                    Colors.black,
+                              ),
                             ),
                           ),
                         ],
@@ -289,8 +377,11 @@ class _SelectAvatarScreenState extends State<SelectAvatarScreen>
 
                     IconButton(
                       onPressed: next,
-                      icon: const Icon(Icons.arrow_right,
-                          size: 50, color: Colors.white),
+                      icon: const Icon(
+                        Icons.arrow_right,
+                        size: 50,
+                        color: Colors.white,
+                      ),
                     ),
                   ],
                 ),

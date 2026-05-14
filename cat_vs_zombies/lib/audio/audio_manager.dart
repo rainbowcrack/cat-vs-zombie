@@ -2,26 +2,54 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 
 class AudioManager {
-  static final AudioManager _instance = AudioManager._internal();
+  static final AudioManager _instance =
+      AudioManager._internal();
 
   factory AudioManager() => _instance;
 
   AudioManager._internal();
 
-  final AudioPlayer _musicPlayer = AudioPlayer();
-  final AudioPlayer _sfxPlayer = AudioPlayer();
+  //
+  // PLAYER MÚSICA
+  //
+  final AudioPlayer _musicPlayer =
+      AudioPlayer();
+
+  //
+  // PLAYERS SFX
+  //
+  final List<AudioPlayer> _sfxPlayers =
+      List.generate(
+    5,
+    (_) => AudioPlayer(),
+  );
+
+  int _sfxIndex = 0;
 
   bool _muted = false;
 
+  String? _currentMusic;
+
   bool get isMuted => _muted;
 
-  /// inicia música em loop
+  //
+  // MÚSICA
+  //
   Future<void> playMusic(String file) async {
     if (_muted) return;
 
+    //
+    // evita reiniciar mesma música
+    //
+    if (_currentMusic == file) return;
+
+    _currentMusic = file;
+
     await _musicPlayer.stop();
 
-    await _musicPlayer.setReleaseMode(ReleaseMode.loop);
+    await _musicPlayer.setReleaseMode(
+      ReleaseMode.loop,
+    );
 
     await _musicPlayer.play(
       AssetSource(_format(file)),
@@ -29,40 +57,90 @@ class AudioManager {
     );
   }
 
-  /// efeitos sonoros (laser, zombie etc)
+  //
+  // SFX
+  //
   Future<void> playSfx(String file) async {
     if (_muted) return;
 
-    await _sfxPlayer.stop();
+    final player =
+        _sfxPlayers[_sfxIndex];
 
-    await _sfxPlayer.play(
-      AssetSource(_format(file)),
-      volume: 1.0,
-    );
+    _sfxIndex =
+        (_sfxIndex + 1) %
+            _sfxPlayers.length;
+
+    try {
+      await player.stop();
+
+      await player.play(
+        AssetSource(_format(file)),
+        volume: 1.0,
+      );
+    } catch (_) {}
   }
 
-  /// 🔇 mute global
+  //
+  // MUTE
+  //
   Future<void> toggleMute() async {
     _muted = !_muted;
 
     if (_muted) {
       await _musicPlayer.pause();
-      await _sfxPlayer.stop();
+
+      for (final p in _sfxPlayers) {
+        await p.stop();
+      }
     } else {
       await _musicPlayer.resume();
     }
   }
 
-  void dispose() {
-    _musicPlayer.dispose();
-    _sfxPlayer.dispose();
+  //
+  // STOP MUSIC
+  //
+  Future<void> stopMusic() async {
+    _currentMusic = null;
+
+    await _musicPlayer.stop();
   }
 
-  ///  helper Web/Mobile (mp3 ou wav automático)
+  //
+  // STOP ALL
+  //
+  Future<void> stopAll() async {
+    _currentMusic = null;
+
+    await _musicPlayer.stop();
+
+    for (final p in _sfxPlayers) {
+      await p.stop();
+    }
+  }
+
+  //
+  // DISPOSE
+  //
+  void dispose() {
+    _musicPlayer.dispose();
+
+    for (final p in _sfxPlayers) {
+      p.dispose();
+    }
+  }
+
+  //
+  // WEB/MOBILE
+  //
   String _format(String file) {
     if (kIsWeb) {
-      return file.replaceAll('.mp3', '.wav');
+      return file.replaceAll(
+        '.mp3',
+        '.wav',
+      );
     }
+
     return file;
   }
 }
